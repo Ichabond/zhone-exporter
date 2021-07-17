@@ -427,25 +427,26 @@ func ParseWirelessData(data [2]map[string]*goquery.Document) []WifiClient {
 		}
 		clientList := clientListMatch[1]
 		clientListSlice := strings.Split(clientList, "#")
+		var err error
+		toFloat := func(s string) float64 {
+			var f float64
+			if err != nil {
+				log.Fatal(err)
+			}
+			f, err = strconv.ParseFloat(s, 64)
+			return f
+		}
 		for i := range clientListSlice {
+			var clientMac net.HardwareAddr
 			clientData := strings.Split(clientListSlice[i], "|")
-			clientMac, err := net.ParseMAC(clientData[1])
+			clientMac, err = net.ParseMAC(clientData[1])
 			if err != nil {
 				log.Fatal(err)
 			}
-			rssi, err := strconv.ParseFloat(clientData[2], 64)
-			if err != nil {
-				log.Fatal(err)
-			}
-			noise, err := strconv.ParseFloat(clientData[3], 64)
-			if err != nil {
-				log.Fatal(err)
-			}
-			snr, err := strconv.ParseFloat(clientData[4], 64)
-			if err != nil {
-				log.Fatal(err)
-			}
-			quality, err := strconv.ParseFloat(clientData[5], 64)
+			rssi := toFloat(clientData[2])
+			noise := toFloat(clientData[3])
+			snr := toFloat(clientData[4])
+			quality := toFloat(clientData[5])
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -459,49 +460,32 @@ func ParseWirelessData(data [2]map[string]*goquery.Document) []WifiClient {
 		}
 		clientList := clientListMatch[1]
 		clientListSlice := strings.Split(clientList, "#")
+		var err error
+		toFloat := func(s string) float64 {
+			var f float64
+			if err != nil {
+				log.Fatal(err)
+			}
+			f, err = strconv.ParseFloat(s, 64)
+			return f
+		}
 		for i := range clientListSlice {
+			var clientMac net.HardwareAddr
 			clientData := strings.Split(clientListSlice[i], "|")
 			clientMac, err := net.ParseMAC(clientData[0])
 			if err != nil {
 				log.Fatal(err)
 			}
-			timeAssociated, err := strconv.ParseFloat(clientData[1], 64)
-			if err != nil {
-				log.Fatal(err)
-			}
-			txFrames, err := strconv.ParseFloat(clientData[2], 64)
-			if err != nil {
-				log.Fatal(err)
-			}
-			TXUnicastFrames, err := strconv.ParseFloat(clientData[3], 64)
-			if err != nil {
-				log.Fatal(err)
-			}
-			txErrs, err := strconv.ParseFloat(clientData[4], 64)
-			if err != nil {
-				log.Fatal(err)
-			}
-			TXRetries, err := strconv.ParseFloat(clientData[5], 64)
-			if err != nil {
-				log.Fatal(err)
-			}
-			TxRetryRate, err := strconv.ParseFloat(clientData[6], 64)
-			if err != nil {
-				log.Fatal(err)
-			}
-			RXUnicastFrames, err := strconv.ParseFloat(clientData[7], 64)
-			if err != nil {
-				log.Fatal(err)
-			}
-			RXBcastFrames, err := strconv.ParseFloat(clientData[8], 64)
-			if err != nil {
-				log.Fatal(err)
-			}
-			TXRate, err := strconv.ParseFloat(clientData[9], 64)
-			if err != nil {
-				log.Fatal(err)
-			}
-			RXRate, err := strconv.ParseFloat(clientData[10], 64)
+			timeAssociated := toFloat(clientData[1])
+			txFrames := toFloat(clientData[2])
+			TXUnicastFrames := toFloat(clientData[3])
+			txErrs := toFloat(clientData[4])
+			TXRetries := toFloat(clientData[5])
+			TxRetryRate := toFloat(clientData[6])
+			RXUnicastFrames := toFloat(clientData[7])
+			RXBcastFrames := toFloat(clientData[8])
+			TXRate := toFloat(clientData[9])
+			RXRate := toFloat(clientData[10])
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -537,9 +521,9 @@ func ParseinterfaceStatus(data *goquery.Document) map[string][2]float64 {
 	IDs = IDs[0 : len(IDs)-1]
 	values := strings.Split(split[1], "/")
 	ifstate := strings.Split(values[0], "|")
-	ifstate = ifstate[1:len(ifstate)]
+	ifstate = ifstate[1:]
 	ifspeed := strings.Split(values[1], "|")
-	ifspeed = ifspeed[1:len(ifspeed)]
+	ifspeed = ifspeed[1:]
 	var speeds []float64
 	var states []float64
 	for i := range ifspeed {
@@ -657,9 +641,9 @@ func ParseGPONData(data *goquery.Document) GPONData {
 // FetchData executes the web scrapes required for Interface and GPON data, and returns the associated goquery Documents
 func (e *ZhoneExporter) FetchData() (*goquery.Document, *goquery.Document, *goquery.Document) {
 	urls := []url.URL{
-		url.URL{Scheme: "http", Host: e.URL, Path: "statsifc.html", User: url.UserPassword(e.username, e.password)},
-		url.URL{Scheme: "http", Host: e.URL, Path: "zhnethernetstatus.html", User: url.UserPassword(e.username, e.password)},
-		url.URL{Scheme: "http", Host: e.URL, Path: "zhngponstatus.html", User: url.UserPassword(e.username, e.password)}}
+		{Scheme: "http", Host: e.URL, Path: "statsifc.html", User: url.UserPassword(e.username, e.password)},
+		{Scheme: "http", Host: e.URL, Path: "zhnethernetstatus.html", User: url.UserPassword(e.username, e.password)},
+		{Scheme: "http", Host: e.URL, Path: "zhngponstatus.html", User: url.UserPassword(e.username, e.password)}}
 	var results [3]*goquery.Document
 	for i := range urls {
 		res, err := http.Get(urls[i].String())
@@ -748,5 +732,4 @@ func main() {
 		log.Fatal(err)
 		os.Exit(1)
 	}
-
 }
