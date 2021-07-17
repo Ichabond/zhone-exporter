@@ -1,0 +1,13 @@
+[Unit]
+Description=Zhone CPE Metric exporter
+After=network.target
+
+[Service]
+Type=simple
+# Modify the next line with the installed path and flags
+ExecStart=/usr/local/bin/zhone-exporter 192.168.0.1
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
