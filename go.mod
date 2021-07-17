@@ -1,4 +1,4 @@
-module zhone-exporter
+module github.com/Ichabond/zhone-exporter
 
 go 1.16
 
