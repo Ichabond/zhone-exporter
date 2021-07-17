@@ -1,5 +1,5 @@
 # Zhone-exporter
-[![Go Report Card](https://goreportcard.com/badge/github.com/golang-standards/project-layout?style=flat-square)](https://goreportcard.com/report/github.com/Ichabond/zhone-exporter)
+[![Go Report Card](https://goreportcard.com/badge/github.com/Ichabond/zhone-exporter?style=flat-square)](https://goreportcard.com/report/github.com/Ichabond/zhone-exporter)
 ## Overview
 
 Zhone Exporter is a basic Prometheus exporter for the Zhone ZNID-GPON-2726A1-UK gateway. The gateway does not provide an SNMP interface, and as such, the metrics are gathered through web scraping.
